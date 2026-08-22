@@ -1,18 +1,46 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [HideInInspector]
+    public int MaxHP { get; set; }
+    [HideInInspector]
+    public int CurrentHP { get; set; }
+
+    public event Action<int, bool> OnHealthChanged;
+    public event Action OnDeath;
+
+    public void Init(int _maxHP, int _currentHP)
     {
-        
+        MaxHP = _maxHP;
+        CurrentHP = _currentHP;
     }
 
-    // Update is called once per frame
     void Update()
     {
         
     }
+
+    public void Damage(int _amount)
+    {
+        
+        CurrentHP -= _amount;
+        CurrentHP = Mathf.Max(0, CurrentHP);
+
+        OnHealthChanged?.Invoke(CurrentHP, false);
+
+        if (CurrentHP == 0) { OnDeath?.Invoke(); }
+    }
+
+    public void Heal(int amount)
+    {
+        if (CurrentHP <= 0) return;
+
+        CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
+        OnHealthChanged?.Invoke(CurrentHP, true);
+    }
+
 }
