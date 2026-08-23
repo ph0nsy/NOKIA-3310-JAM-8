@@ -72,6 +72,7 @@ public class AudioManager : MonoBehaviour
             case ESourceSFX.Parry:
                 adudiSourceSFX.PlayOneShot(parrySFX);
                 break;
+                
             case ESourceSFX.Gun:
                 adudiSourceSFX.PlayOneShot(gunSFX);
                 break;
