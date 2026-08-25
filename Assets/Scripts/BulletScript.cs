@@ -1,33 +1,19 @@
 using System.Collections;
-
 using System.Collections.Generic;
-
 using UnityEngine;
-
 
 
 public class BulletScript : MonoBehaviour
 
 {
 
-    [SerializeField] private float speed = 200f;
-
-    private RectTransform rectTransform;
+    [SerializeField] private float speed = 5f;
 
     private bool isInitialized = true; // false when Enemy class is implemented
     private bool isInsideCollider = false;
 
 
-    private void Awake()
-
-    {
-        rectTransform = GetComponent<RectTransform>();
-    }
-
-
     // public void Initialize(float enemySpeed)
-    // Enemy has to indicate the speed and initialize the class
-    // Also Enemy has to delete the oldest bullet on press Enter
 
     // {
 
@@ -43,7 +29,7 @@ public class BulletScript : MonoBehaviour
         if (isInitialized)
         {
             Debug.Log("moving");
-            rectTransform.anchoredPosition += Vector2.left * speed * Time.deltaTime;
+            transform.position += Vector3.left * speed * Time.deltaTime;
         }
     }
 
@@ -62,6 +48,7 @@ public class BulletScript : MonoBehaviour
         {
             isInsideCollider = false;
             Debug.Log("Bullet OUT collider");
+            Destroy(gameObject);
         }
     }
 
