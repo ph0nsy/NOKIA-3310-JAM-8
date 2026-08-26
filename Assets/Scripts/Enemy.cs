@@ -6,6 +6,11 @@ public class Enemy : MonoBehaviour
 {
     public HealthComponent hpComponent;
     public GameObject bulletPrefab;
+    public int maxBullletAmount;
+    public float bulletCooldown;
+    [HideInInspector] public bool bIsOnCooldown = false;
+    float b_cooldownTimer = 0.0f;
+
 
     void Awake(){
         hpComponent = new HealthComponent();
@@ -15,14 +20,14 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         hpComponent.OnHealthChanged+=OnHurt;
-
         OnSpawn();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        UpdateBulletCooldownTimer();
+        Shoot();
     }
 
     // estos metodos nos valen, pero no para proyectos grandes
@@ -31,8 +36,11 @@ public class Enemy : MonoBehaviour
     }
 
     public void OnDespawn(){
-        //spawn the next enemy
-        EnemyManager.Instance.Spawn();
+        
+        // Despawn all bullets
+       while(transform.childCount>0){
+           Destroy(transform.GetChild(0).gameObject);
+       }
         
     }
 
@@ -40,8 +48,27 @@ public class Enemy : MonoBehaviour
 
     }
 
+    private void UpdateBulletCooldownTimer(){
+        if (!bIsOnCooldown) { return; }
+        b_cooldownTimer -= Time.deltaTime;
+        if (b_cooldownTimer <= 0) 
+        {
+            bIsOnCooldown = false;
+        }
+    }
+
     // Spawnea bala
     void Shoot(){
+        
+        if (bIsOnCooldown) {
+            Debug.Log("Bullet not ready");
+            return;
+        }
+        b_cooldownTimer = bulletCooldown;
+        bIsOnCooldown = true;
 
+        if(transform.childCount<maxBullletAmount){
+            Instantiate(bulletPrefab, transform);
+        }
     }
 }

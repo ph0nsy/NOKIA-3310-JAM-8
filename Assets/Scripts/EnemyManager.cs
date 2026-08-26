@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Constants;
 using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
@@ -31,8 +32,14 @@ public class EnemyManager : MonoBehaviour
         EnemySO tmpEnemySO = enemyList[0];
         currentEnemy = Instantiate(enemyPrefab).GetComponent<Enemy>();
         currentEnemy.hpComponent.Init(tmpEnemySO.HP, tmpEnemySO.HP);
+
         currentEnemy.hpComponent.OnDeath+=Despawn;
-        //currentEnemy.bulletPrefab.GetComponent<Bullet>().speed = enemyList[0].BulletSpeed;
+
+        currentEnemy.bulletCooldown = tmpEnemySO.Handicap + PIXELRATIO*(tmpEnemySO.bulletSize + 4 )/tmpEnemySO.BulletSpeed;
+        currentEnemy.maxBullletAmount = tmpEnemySO.HP;
+
+        currentEnemy.bulletPrefab.GetComponent<Bullet>().speed = enemyList[0].BulletSpeed;
+        currentEnemy.bulletPrefab.GetComponent<Bullet>().size = enemyList[0].BulletSize;
 
         enemyList.Remove(tmpEnemySO);
 
@@ -40,13 +47,17 @@ public class EnemyManager : MonoBehaviour
     }
 
     public void Despawn(){
+        
         currentEnemy.OnDespawn();
-
         // yield WaitForSeconds(currentEnemy.Animation["Death"].length*currentEnemy.Animation["Death"].speed)
+        Destroy(currentEnemy.gameObject)
+
         if(enemyList.Count < 1) {
             Debug.Log("GameManager.win()");
             GameManager.Instance.Win();
+            return;
         }
+        Spawn();
         
     }
 

@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
 
         hpComponent = new HealthComponent();
         hpComponent.OnHealthChanged+=OnHealthChanged;
-
+        hpComponent.OnDeath+=Lose;
         
     }
 
@@ -78,6 +78,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("Parried!");
 
             EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
+            GameObject parriedBullet = EnemyManager.Instance.currentEnemy.transform.GetChild(0).gameObject;
+            Destroy(parriedBullet);
 
             // heal on perfect parry
             if(earlyParryFlag && lateParryFlag){
@@ -111,11 +113,12 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void Win(){
 
+    public void Win(){
+        Debug.log("game won")
     }
 
     public void Lose(){
-
+        Debug.log("game lost")
     }
 }
