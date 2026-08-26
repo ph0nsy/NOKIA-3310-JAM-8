@@ -45,6 +45,7 @@ public class EnemyManager : MonoBehaviour
         // yield WaitForSeconds(currentEnemy.Animation["Death"].length*currentEnemy.Animation["Death"].speed)
         if(enemyList.Count < 1) {
             Debug.Log("GameManager.win()");
+            GameManager.Instance.Win();
         }
         
     }
