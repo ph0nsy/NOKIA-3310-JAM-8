@@ -115,10 +115,10 @@ public class GameManager : MonoBehaviour
 
 
     public void Win(){
-        Debug.log("game won")
+        Debug.Log("game won");
     }
 
     public void Lose(){
-        Debug.log("game lost")
+        Debug.Log("game lost");
     }
 }
