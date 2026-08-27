@@ -18,9 +18,11 @@ public class ParryTrigger : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D other){
+        Debug.Log("Something came in");
         GameManager.Instance.UpdateParryTrigger(tipo, true);
     }
     void OnTriggerExit2D(Collider2D other){
+        Debug.Log("something came OUT");
         GameManager.Instance.UpdateParryTrigger(tipo, false);
     }
 

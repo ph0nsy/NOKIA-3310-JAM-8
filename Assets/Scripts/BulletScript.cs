@@ -7,7 +7,8 @@ public class BulletScript : MonoBehaviour
 
 {
 
-    [SerializeField] private float speed = 5f;
+    [SerializeField] public float speed = 5f;
+    [SerializeField] public int size = 4;
 
     private bool isInitialized = true; // false when Enemy class is implemented
     private bool isInsideCollider = false;
@@ -28,28 +29,28 @@ public class BulletScript : MonoBehaviour
     {
         if (isInitialized)
         {
-            Debug.Log("moving");
+            // Debug.Log("moving");
             transform.position += Vector3.left * speed * Time.deltaTime;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("BarSensor"))
-        {
-            isInsideCollider = true;
+        // if (other.CompareTag("BarSensor"))
+        // {
+        //     isInsideCollider = true;
             Debug.Log("Bullet IN collider");
-        }
+        // }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("BarSensor"))
-        {
-            isInsideCollider = false;
+        // if (other.CompareTag("BarSensor"))
+        // {
+        //     isInsideCollider = false;
             Debug.Log("Bullet OUT collider");
-            Destroy(gameObject);
-        }
+        //     Destroy(gameObject);
+        // }
     }
 
 } 

@@ -24,6 +24,10 @@ public class EnemyManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    public void Start(){
+        Spawn();
+    }
+
 
     // Debe spawn/despawn de enemylist
     // trackear current enemy
@@ -40,8 +44,8 @@ public class EnemyManager : MonoBehaviour
         currentEnemy.bulletCooldown = tmpEnemySO.Handicap + PIXELRATIO*(tmpEnemySO.BulletSize + 4 )/tmpEnemySO.BulletSpeed;
         currentEnemy.maxBullletAmount = tmpEnemySO.HP;
 
-        currentEnemy.bulletPrefab.GetComponent<Bullet>().speed = enemyList[0].BulletSpeed;
-        currentEnemy.bulletPrefab.GetComponent<Bullet>().size = enemyList[0].BulletSize;
+        currentEnemy.bulletPrefab.GetComponent<BulletScript>().speed = enemyList[0].BulletSpeed;
+        currentEnemy.bulletPrefab.GetComponent<BulletScript>().size = enemyList[0].BulletSize;
 
         enemyList.Remove(tmpEnemySO);
 

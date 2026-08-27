@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public HealthComponent hpComponent;
+    [HideInInspector] public HealthComponent hpComponent;
     public GameObject bulletPrefab;
     public int maxBullletAmount;
     public float bulletCooldown;
@@ -13,12 +13,13 @@ public class Enemy : MonoBehaviour
 
 
     void Awake(){
-        hpComponent = new HealthComponent();
+         hpComponent = GetComponent<HealthComponent>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
+       
         hpComponent.OnHealthChanged+=OnHurt;
         OnSpawn();
     }
@@ -61,13 +62,14 @@ public class Enemy : MonoBehaviour
     void Shoot(){
         
         if (bIsOnCooldown) {
-            Debug.Log("Bullet not ready");
+            // Debug.Log("Bullet not ready");
             return;
         }
         b_cooldownTimer = bulletCooldown;
         bIsOnCooldown = true;
 
         if(transform.childCount<maxBullletAmount){
+            Debug.Log("BANG!");
             Instantiate(bulletPrefab, transform);
         }
     }

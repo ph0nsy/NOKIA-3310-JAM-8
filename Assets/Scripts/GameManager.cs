@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        hpComponent = new HealthComponent();
+        hpComponent = GetComponent<HealthComponent>();
         hpComponent.OnHealthChanged+=OnHealthChanged;
         hpComponent.OnDeath+=Lose;
         
