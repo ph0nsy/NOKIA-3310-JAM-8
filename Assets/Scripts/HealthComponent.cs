@@ -7,8 +7,7 @@ public class HealthComponent : MonoBehaviour
 {
     [HideInInspector]
     public int MaxHP { get; set; }
-    [HideInInspector]
-    public int CurrentHP { get; set; }
+    public int CurrentHP;
 
     public event Action<int, bool> OnHealthChanged;
     public event Action OnDeath;
