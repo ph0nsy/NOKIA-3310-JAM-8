@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public float Cooldown = 0.1f;
     public bool bIsOnCooldown = false;
     public float m_cooldownTimer = 0.0f;
+    public bool isGameOver = false;
+    public float perfectParryWindow = 0.2f;
 
 
     void Awake() {
@@ -38,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     void Update(){
         if (Input.GetKeyDown("space")) {
-            // Debug.Log("PArry Attempt");
+            Debug.Log("CLICK");
             Parry();
         }
         UpdateParryCooldownTimer();
@@ -64,6 +66,8 @@ public class GameManager : MonoBehaviour
         if(type == ParryTrigger.TriggerType.Early){
             earlyParryFlag = status;
         }
+
+        Debug.Log($"Trigger {type} actualizado a: {status}");
     }
 
     public void ResetParryTrigger(){
@@ -85,21 +89,41 @@ public class GameManager : MonoBehaviour
 
         
         if (earlyParryFlag || lateParryFlag) {
-            // Debug.Log("Parried!");
+            Debug.Log($"Early: {earlyParryFlag} | Late: {lateParryFlag} | HP Actual: {hpComponent.CurrentHP}");
 
-            // GameObject parriedBullet = EnemyManager.Instance.currentEnemy.transform.GetChild(0).gameObject;
-            // Destroy(parriedBullet);
-            // EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
-            
-
-            // heal on perfect parry
+            // 1. heal on perfect parry
             if(earlyParryFlag && lateParryFlag){
                 Debug.Log("Perfect parry!");
 
                 hpComponent.Heal(1);
             }
+            
+            BulletScript[] activeBullets = FindObjectsByType<BulletScript>(FindObjectsSortMode.None);
+        
+            if (activeBullets.Length > 0)
+            {
+                // 2. Find and destroy the oldest bullet
+                BulletScript oldestBullet = activeBullets[0];
+                
+                foreach (BulletScript b in activeBullets)
+                {
+                    if (b.transform.position.x < oldestBullet.transform.position.x)
+                    {
+                        oldestBullet = b;
+                    }
+                }
+
+                oldestBullet.isParried = true;
+                Destroy(oldestBullet.gameObject);
+            }
+            
+
+            // 3. Reset parry flags and hurt enemy
+            ResetParryTrigger();
 
             EnemyManager.Instance.HurtEnemy();
+
+            Debug.Log($"[POST-COMBATE] Enemigo derrotado. Vida restante del jugador: {hpComponent.CurrentHP}");
 
         }
         // Debug.Log("Missed!");
@@ -108,24 +132,25 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void OnHealthChanged(int HpChange, bool isHealing){
+    private void OnHealthChanged(int currentHP, bool isHealing){
         if (isHealing){
             
-            OnHeal(HpChange);
+            OnHeal(currentHP);
             
         }
         else {
-            OnHurt(HpChange);
+            OnHurt(currentHP);
         }
+        Debug.Log($"Vida actualizada. HP Actual: {currentHP}");
     }
 
     //remove Hat
-    private void OnHurt(int HpChange){
+    private void OnHurt(int currentHP){
         Debug.Log("OURCH HP: "+ hpComponent.CurrentHP);
     }
 
     //add Hat
-    private void OnHeal(int HpChange){
+    private void OnHeal(int currentHP){
         Debug.Log("HEAL HP: "+ hpComponent.CurrentHP);
     }
 
@@ -136,5 +161,6 @@ public class GameManager : MonoBehaviour
 
     public void Lose(){
         Debug.Log("game lost");
+        isGameOver = true;
     }
 }

@@ -6,6 +6,7 @@ public class ParryTrigger : MonoBehaviour
 {
     public enum TriggerType { Late, Early};
     public TriggerType tipo;
+    public static bool wasParried = false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,15 +20,26 @@ public class ParryTrigger : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other){
         // Debug.Log("Something came in");
-        GameManager.Instance.UpdateParryTrigger(tipo, true);
+        if (other.CompareTag("Bullet"))
+        {
+            GameManager.Instance.UpdateParryTrigger(tipo, true);
+        }
     }
     void OnTriggerExit2D(Collider2D other){
         // Debug.Log("something came OUT");
-        GameManager.Instance.UpdateParryTrigger(tipo, false);
-        if (tipo == TriggerType.Late){
-            // Debug.Log("DESTROY BULLET");
-            Destroy(other.gameObject);
-            GameManager.Instance.hpComponent.Damage(1);
+
+        if (other.CompareTag("Bullet"))
+        {
+            GameManager.Instance.UpdateParryTrigger(tipo, false);
+            BulletScript bullet = other.GetComponent<BulletScript>();
+            if (tipo == TriggerType.Late && !bullet.isParried){
+                // Debug.Log("DESTROY BULLET");
+                Destroy(other.gameObject);
+                if (!GameManager.Instance.isGameOver)
+                {
+                    GameManager.Instance.hpComponent.Damage(1);
+                }
+            }
         }
     }
 

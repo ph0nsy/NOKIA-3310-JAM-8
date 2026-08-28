@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.isGameOver) return;
         UpdateBulletCooldownTimer();
         Shoot();
     }
@@ -38,7 +39,7 @@ public class Enemy : MonoBehaviour
 
     public void OnDespawn(){
         
-        Debug.Log("DEAD");
+        Debug.Log("ENEMY DEAD");
         // Despawn all bullets
         // while(transform.childCount>0){
         //    Destroy(transform.GetChild(0).gameObject);
