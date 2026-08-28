@@ -38,15 +38,16 @@ public class Enemy : MonoBehaviour
 
     public void OnDespawn(){
         
+        Debug.Log("DEAD");
         // Despawn all bullets
-       while(transform.childCount>0){
-           Destroy(transform.GetChild(0).gameObject);
-       }
+        // while(transform.childCount>0){
+        //    Destroy(transform.GetChild(0).gameObject);
+        // }
         
     }
 
     void OnHurt(int HPchange, bool isHealing){
-
+        // Debug.Log("I am hurt by the samurai!");
     }
 
     private void UpdateBulletCooldownTimer(){
@@ -69,7 +70,7 @@ public class Enemy : MonoBehaviour
         bIsOnCooldown = true;
 
         if(transform.childCount<maxBullletAmount){
-            Debug.Log("BANG!");
+            // Debug.Log("BANG!");
             Instantiate(bulletPrefab, transform);
         }
     }

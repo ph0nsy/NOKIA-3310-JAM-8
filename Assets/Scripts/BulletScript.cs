@@ -11,7 +11,7 @@ public class BulletScript : MonoBehaviour
     [SerializeField] public int size = 4;
 
     private bool isInitialized = true; // false when Enemy class is implemented
-    private bool isInsideCollider = false;
+    // private bool isInsideCollider = false;
 
 
     // public void Initialize(float enemySpeed)
@@ -39,7 +39,7 @@ public class BulletScript : MonoBehaviour
         // if (other.CompareTag("BarSensor"))
         // {
         //     isInsideCollider = true;
-            Debug.Log("Bullet IN collider");
+            // Debug.Log("Bullet IN collider");
         // }
     }
 
@@ -48,7 +48,7 @@ public class BulletScript : MonoBehaviour
         // if (other.CompareTag("BarSensor"))
         // {
         //     isInsideCollider = false;
-            Debug.Log("Bullet OUT collider");
+            // Debug.Log("Bullet OUT collider");
         //     Destroy(gameObject);
         // }
     }

@@ -28,6 +28,10 @@ public class EnemyManager : MonoBehaviour
         Spawn();
     }
 
+    public void HurtEnemy(){
+        currentEnemy.hpComponent.Damage(1);
+    }
+
 
     // Debe spawn/despawn de enemylist
     // trackear current enemy
@@ -36,6 +40,7 @@ public class EnemyManager : MonoBehaviour
             return;
         }
         EnemySO tmpEnemySO = enemyList[0];
+        Debug.Log("Spawning enemy");
         currentEnemy = Instantiate(enemyPrefab).GetComponent<Enemy>();
         currentEnemy.hpComponent.Init(tmpEnemySO.HP, tmpEnemySO.HP);
 

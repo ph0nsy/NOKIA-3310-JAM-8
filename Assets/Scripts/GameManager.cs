@@ -10,9 +10,9 @@ public class GameManager : MonoBehaviour
 
     public bool earlyParryFlag = false;
     public bool lateParryFlag = false;
-    [HideInInspector] public float Cooldown { get; set; }
-    [HideInInspector] public bool bIsOnCooldown = false;
-    float m_cooldownTimer = 0.0f;
+    public float Cooldown = 0.1f;
+    public bool bIsOnCooldown = false;
+    public float m_cooldownTimer = 0.0f;
 
 
     void Awake() {
@@ -27,21 +27,29 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         hpComponent = GetComponent<HealthComponent>();
+        hpComponent.Init(3,1);
         hpComponent.OnHealthChanged+=OnHealthChanged;
         hpComponent.OnDeath+=Lose;
         
     }
 
+    void Start(){
+    }
+
     void Update(){
         if (Input.GetKeyDown("space")) {
-           Parry();
+            // Debug.Log("PArry Attempt");
+            Parry();
         }
         UpdateParryCooldownTimer();
 
     }
 
     private void UpdateParryCooldownTimer(){
-        if (!bIsOnCooldown) { return; }
+        if (!bIsOnCooldown) { 
+            // Debug.Log("Parry Ready");
+            return; 
+        }
         m_cooldownTimer -= Time.deltaTime;
         if (m_cooldownTimer <= 0) 
         {
@@ -66,6 +74,8 @@ public class GameManager : MonoBehaviour
 
     private void Parry(){
 
+        // Debug.Log(bIsOnCooldown);
+        // Debug.Log( m_cooldownTimer);
         if (bIsOnCooldown) {
             Debug.Log("Parry not ready");
             return;
@@ -73,13 +83,14 @@ public class GameManager : MonoBehaviour
         m_cooldownTimer = Cooldown;
         bIsOnCooldown = true;
 
-        //
+        
         if (earlyParryFlag || lateParryFlag) {
-            Debug.Log("Parried!");
+            // Debug.Log("Parried!");
 
-            EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
-            GameObject parriedBullet = EnemyManager.Instance.currentEnemy.transform.GetChild(0).gameObject;
-            Destroy(parriedBullet);
+            // GameObject parriedBullet = EnemyManager.Instance.currentEnemy.transform.GetChild(0).gameObject;
+            // Destroy(parriedBullet);
+            // EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
+            
 
             // heal on perfect parry
             if(earlyParryFlag && lateParryFlag){
@@ -87,16 +98,21 @@ public class GameManager : MonoBehaviour
 
                 hpComponent.Heal(1);
             }
+
+            EnemyManager.Instance.HurtEnemy();
+
         }
-        Debug.Log("Missed!");
-        return;
+        // Debug.Log("Missed!");
+        // return;
 
     }
 
 
     private void OnHealthChanged(int HpChange, bool isHealing){
         if (isHealing){
+            
             OnHeal(HpChange);
+            
         }
         else {
             OnHurt(HpChange);
@@ -105,12 +121,12 @@ public class GameManager : MonoBehaviour
 
     //remove Hat
     private void OnHurt(int HpChange){
-
+        Debug.Log("OURCH HP: "+ hpComponent.CurrentHP);
     }
 
     //add Hat
     private void OnHeal(int HpChange){
-
+        Debug.Log("HEAL HP: "+ hpComponent.CurrentHP);
     }
 
 
