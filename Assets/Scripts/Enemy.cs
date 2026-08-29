@@ -13,13 +13,12 @@ public class Enemy : MonoBehaviour
 
 
     void Awake(){
-         hpComponent = GetComponent<HealthComponent>();
+        hpComponent = GetComponent<HealthComponent>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-       
         hpComponent.OnHealthChanged+=OnHurt;
         OnSpawn();
     }
@@ -32,16 +31,13 @@ public class Enemy : MonoBehaviour
     }
 
     // estos metodos nos valen, pero no para proyectos grandes
-    void OnSpawn(){
-
+    void OnSpawn()
+    {
+        bIsOnCooldown = true;
     }
 
-    public void OnDespawn(){
-        
-        // Despawn all bullets
-       while(transform.childCount>0){
-           Destroy(transform.GetChild(0).gameObject);
-       }
+    public void OnDespawn()
+    {
         
     }
 

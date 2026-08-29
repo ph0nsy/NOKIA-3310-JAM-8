@@ -30,7 +30,6 @@ public class CinematicSequence : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
@@ -89,7 +88,10 @@ public class CinematicSequence : MonoBehaviour
     {
         OnCinematicEnd?.Invoke((int) type);
 
-        img.enabled = false;
+        if ((int)type <= 1) 
+        {
+            img.enabled = false;
+        }
         lastFrame = false;
         type = 0;
         

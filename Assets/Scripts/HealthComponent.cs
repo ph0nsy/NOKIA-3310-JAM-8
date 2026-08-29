@@ -18,11 +18,6 @@ public class HealthComponent : MonoBehaviour
         CurrentHP = _currentHP;
     }
 
-    void Update()
-    {
-        
-    }
-
     public void Damage(int _amount)
     {
         
@@ -41,5 +36,4 @@ public class HealthComponent : MonoBehaviour
         CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
         OnHealthChanged?.Invoke(CurrentHP, true);
     }
-
 }

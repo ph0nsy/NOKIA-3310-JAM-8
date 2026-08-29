@@ -5,15 +5,17 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
+ 
+    public bool inPlay = false;
+    public bool ignoreInput = false;
+ 
     public HealthComponent hpComponent;
-
 
     public bool earlyParryFlag = false;
     public bool lateParryFlag = false;
     [HideInInspector] public float Cooldown { get; set; }
     [HideInInspector] public bool bIsOnCooldown = false;
     float m_cooldownTimer = 0.0f;
-
 
     void Awake() {
         if (Instance != null)
@@ -22,22 +24,42 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+    }
 
+    void Start()
+    {
         hpComponent = GetComponent<HealthComponent>();
         hpComponent.OnHealthChanged+=OnHealthChanged;
         hpComponent.OnDeath+=Lose;
+        CinematicSequence.Instance.OnCinematicEnd += ResetGame;
+    }
+
+    void ResetGame(int _animIdx)
+    {
+        if(_animIdx > 0)  
+        {
+            ignoreInput = false;
+            hpComponent.Init(6,1);
+            EnemyManager.Instance.CurrEnemyIdx = 0;
+        }
         
     }
 
     void Update(){
-        if (Input.GetKeyDown("space")) {
-           Parry();
+        if(ignoreInput) { return; }
+        if (Input.GetKeyDown("space")) 
+        { 
+            if (!inPlay) 
+            {
+                CinematicSequence.Instance.PlayCinematic(1);
+                inPlay = true;
+                ignoreInput = true;
+                return;
+            }
+            Parry(); 
         }
         UpdateParryCooldownTimer();
-
     }
 
     private void UpdateParryCooldownTimer(){
@@ -74,7 +96,8 @@ public class GameManager : MonoBehaviour
         bIsOnCooldown = true;
 
         //
-        if (earlyParryFlag || lateParryFlag) {
+        if (earlyParryFlag || lateParryFlag) 
+        {
             Debug.Log("Parried!");
 
             EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
@@ -82,43 +105,45 @@ public class GameManager : MonoBehaviour
             Destroy(parriedBullet);
 
             // heal on perfect parry
-            if(earlyParryFlag && lateParryFlag){
+            if(earlyParryFlag && lateParryFlag)
+            {
                 Debug.Log("Perfect parry!");
-
                 hpComponent.Heal(1);
             }
         }
         Debug.Log("Missed!");
         return;
-
     }
 
-
-    private void OnHealthChanged(int HpChange, bool isHealing){
-        if (isHealing){
-            OnHeal(HpChange);
-        }
-        else {
-            OnHurt(HpChange);
-        }
+    private void OnHealthChanged(int HpChange, bool isHealing)
+    {
+        if (isHealing){ OnHeal(HpChange); }
+        else { OnHurt(HpChange); }
     }
 
     //remove Hat
-    private void OnHurt(int HpChange){
+    private void OnHurt(int HpChange)
+    {
 
     }
 
     //add Hat
-    private void OnHeal(int HpChange){
+    private void OnHeal(int HpChange)
+    {
 
     }
 
-
     public void Win(){
+        CinematicSequence.Instance.PlayCinematic(2);
+        inPlay = false;
+        ignoreInput = false;
         Debug.Log("game won");
     }
 
     public void Lose(){
+        CinematicSequence.Instance.PlayCinematic(3);
+        inPlay = true;
+        ignoreInput = false;
         Debug.Log("game lost");
     }
 }
