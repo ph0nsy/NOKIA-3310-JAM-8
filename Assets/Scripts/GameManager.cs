@@ -132,26 +132,26 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void OnHealthChanged(int currentHP, bool isHealing){
+    private void OnHealthChanged(int HPchange, bool isHealing){
         if (isHealing){
             
-            OnHeal(currentHP);
+            OnHeal(HPchange);
             
         }
         else {
-            OnHurt(currentHP);
+            OnHurt(HPchange);
         }
-        Debug.Log($"Vida actualizada. HP Actual: {currentHP}");
+        Debug.Log($"Vida actualizada. HP Actual: {hpComponent.CurrentHP}");
     }
 
     //remove Hat
-    private void OnHurt(int currentHP){
-        Debug.Log("OURCH HP: "+ hpComponent.CurrentHP);
+    private void OnHurt(int HPchange){
+        Debug.Log("OURCH HP: "+ HPchange);
     }
 
     //add Hat
-    private void OnHeal(int currentHP){
-        Debug.Log("HEAL HP: "+ hpComponent.CurrentHP);
+    private void OnHeal(int HPchange){
+        Debug.Log("HEAL HP: "+ HPchange);
     }
 
 
