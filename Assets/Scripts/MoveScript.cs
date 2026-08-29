@@ -14,7 +14,7 @@ public class MoveScript : MonoBehaviour
   
   private void Awake()
   {
-    Direction = new Vector2(0.5f, 0.5f);
+    Direction = new Vector2(1.0f, 0.0f);
   }
 
   void Start()

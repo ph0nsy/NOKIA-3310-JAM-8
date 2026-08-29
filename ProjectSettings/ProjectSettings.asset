@@ -42,8 +42,8 @@ PlayerSettings:
   m_SplashScreenLogos: []
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
-  defaultScreenWidth: 1920
-  defaultScreenHeight: 1080
+  defaultScreenWidth: 84
+  defaultScreenHeight: 48
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
   m_StereoRenderingPath: 0
@@ -626,8 +626,8 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: The Good, the Bad and the Casual
-  metroPackageVersion: 
+  metroPackageName: TheGoodtheBadandtheCasual
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -635,7 +635,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: The Good, the Bad and the Casual
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: The Good, the Bad and the Casual
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
