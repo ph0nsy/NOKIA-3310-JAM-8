@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
     public HealthComponent hpComponent;
 
 
-    public bool earlyParryFlag;
-    public bool lateParryFlag;
+    public bool earlyParryFlag = false;
+    public bool lateParryFlag = false;
     [HideInInspector] public float Cooldown { get; set; }
     [HideInInspector] public bool bIsOnCooldown = false;
     float m_cooldownTimer = 0.0f;
@@ -26,8 +26,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        hpComponent = new HealthComponent();
-
+        hpComponent = GetComponent<HealthComponent>();
+        hpComponent.OnHealthChanged+=OnHealthChanged;
+        hpComponent.OnDeath+=Lose;
         
     }
 
@@ -56,7 +57,13 @@ public class GameManager : MonoBehaviour
             earlyParryFlag = status;
         }
     }
-    
+
+    public void ResetParryTrigger(){
+        lateParryFlag = false;
+        earlyParryFlag = false;
+    }
+
+
     private void Parry(){
 
         if (bIsOnCooldown) {
@@ -66,24 +73,52 @@ public class GameManager : MonoBehaviour
         m_cooldownTimer = Cooldown;
         bIsOnCooldown = true;
 
-        if(earlyParryFlag && lateParryFlag){
-            Debug.Log("Perfect parry!");
-            return;
-        }
+        //
         if (earlyParryFlag || lateParryFlag) {
             Debug.Log("Parried!");
-            return;
+
+            EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
+            GameObject parriedBullet = EnemyManager.Instance.currentEnemy.transform.GetChild(0).gameObject;
+            Destroy(parriedBullet);
+
+            // heal on perfect parry
+            if(earlyParryFlag && lateParryFlag){
+                Debug.Log("Perfect parry!");
+
+                hpComponent.Heal(1);
+            }
         }
         Debug.Log("Missed!");
         return;
 
     }
 
-    public void Win(){
+
+    private void OnHealthChanged(int HpChange, bool isHealing){
+        if (isHealing){
+            OnHeal(HpChange);
+        }
+        else {
+            OnHurt(HpChange);
+        }
+    }
+
+    //remove Hat
+    private void OnHurt(int HpChange){
 
     }
 
-    public void Lose(){
+    //add Hat
+    private void OnHeal(int HpChange){
 
+    }
+
+
+    public void Win(){
+        Debug.Log("game won");
+    }
+
+    public void Lose(){
+        Debug.Log("game lost");
     }
 }
