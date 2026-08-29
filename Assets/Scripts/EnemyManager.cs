@@ -12,6 +12,7 @@ public class EnemyManager : MonoBehaviour
     public Enemy currentEnemy;
     public GameObject enemyPrefab;
     public Transform EnemySpawnPoint;
+    [SerializeField] private float timeBetweenEnemies = 3f;
 
     void Awake() {
         if (Instance != null)
@@ -25,17 +26,26 @@ public class EnemyManager : MonoBehaviour
     }
 
     public void Start(){
-        Spawn();
+        StartCoroutine(SpawnRoutine());
+    }
+
+    public void HurtEnemy(){
+        currentEnemy.hpComponent.Damage(1);
     }
 
 
     // Debe spawn/despawn de enemylist
     // trackear current enemy
-    public void Spawn(){
-        if(enemyList.Count < 1) {
-            return;
+    public IEnumerator SpawnRoutine(){
+
+        yield return new WaitForSeconds(timeBetweenEnemies);
+
+        if(GameManager.Instance.isGameOver || enemyList.Count < 1) {
+            yield break;
         }
+
         EnemySO tmpEnemySO = enemyList[0];
+        Debug.Log("Spawning enemy");
         currentEnemy = Instantiate(enemyPrefab).GetComponent<Enemy>();
         currentEnemy.hpComponent.Init(tmpEnemySO.HP, tmpEnemySO.HP);
 
@@ -46,6 +56,9 @@ public class EnemyManager : MonoBehaviour
 
         currentEnemy.bulletPrefab.GetComponent<BulletScript>().speed = enemyList[0].BulletSpeed;
         currentEnemy.bulletPrefab.GetComponent<BulletScript>().size = enemyList[0].BulletSize;
+
+        int enemigosRestantes = enemyList.Count;
+        Debug.Log($"Spawning enemigo. Enemigos restantes en lista: {enemigosRestantes}. Max bullets: {currentEnemy.maxBullletAmount}");
 
         enemyList.Remove(tmpEnemySO);
 
@@ -63,7 +76,7 @@ public class EnemyManager : MonoBehaviour
             GameManager.Instance.Win();
             return;
         }
-        Spawn();
+        StartCoroutine(SpawnRoutine());
         
     }
 

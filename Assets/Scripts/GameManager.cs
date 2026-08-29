@@ -10,9 +10,11 @@ public class GameManager : MonoBehaviour
 
     public bool earlyParryFlag = false;
     public bool lateParryFlag = false;
-    [HideInInspector] public float Cooldown { get; set; }
-    [HideInInspector] public bool bIsOnCooldown = false;
-    float m_cooldownTimer = 0.0f;
+    public float Cooldown = 0.1f;
+    public bool bIsOnCooldown = false;
+    public float m_cooldownTimer = 0.0f;
+    public bool isGameOver = false;
+    public float perfectParryWindow = 0.2f;
 
 
     void Awake() {
@@ -27,21 +29,29 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         hpComponent = GetComponent<HealthComponent>();
+        hpComponent.Init(3,1);
         hpComponent.OnHealthChanged+=OnHealthChanged;
         hpComponent.OnDeath+=Lose;
         
     }
 
+    void Start(){
+    }
+
     void Update(){
         if (Input.GetKeyDown("space")) {
-           Parry();
+            Debug.Log("CLICK");
+            Parry();
         }
         UpdateParryCooldownTimer();
 
     }
 
     private void UpdateParryCooldownTimer(){
-        if (!bIsOnCooldown) { return; }
+        if (!bIsOnCooldown) { 
+            // Debug.Log("Parry Ready");
+            return; 
+        }
         m_cooldownTimer -= Time.deltaTime;
         if (m_cooldownTimer <= 0) 
         {
@@ -56,6 +66,8 @@ public class GameManager : MonoBehaviour
         if(type == ParryTrigger.TriggerType.Early){
             earlyParryFlag = status;
         }
+
+        Debug.Log($"Trigger {type} actualizado a: {status}");
     }
 
     public void ResetParryTrigger(){
@@ -66,6 +78,8 @@ public class GameManager : MonoBehaviour
 
     private void Parry(){
 
+        // Debug.Log(bIsOnCooldown);
+        // Debug.Log( m_cooldownTimer);
         if (bIsOnCooldown) {
             Debug.Log("Parry not ready");
             return;
@@ -73,44 +87,71 @@ public class GameManager : MonoBehaviour
         m_cooldownTimer = Cooldown;
         bIsOnCooldown = true;
 
-        //
+        
         if (earlyParryFlag || lateParryFlag) {
-            Debug.Log("Parried!");
+            Debug.Log($"Early: {earlyParryFlag} | Late: {lateParryFlag} | HP Actual: {hpComponent.CurrentHP}");
 
-            EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
-            GameObject parriedBullet = EnemyManager.Instance.currentEnemy.transform.GetChild(0).gameObject;
-            Destroy(parriedBullet);
-
-            // heal on perfect parry
+            // 1. heal on perfect parry
             if(earlyParryFlag && lateParryFlag){
                 Debug.Log("Perfect parry!");
 
                 hpComponent.Heal(1);
             }
+            
+            BulletScript[] activeBullets = FindObjectsByType<BulletScript>(FindObjectsSortMode.None);
+        
+            if (activeBullets.Length > 0)
+            {
+                // 2. Find and destroy the oldest bullet
+                BulletScript oldestBullet = activeBullets[0];
+                
+                foreach (BulletScript b in activeBullets)
+                {
+                    if (b.transform.position.x < oldestBullet.transform.position.x)
+                    {
+                        oldestBullet = b;
+                    }
+                }
+
+                oldestBullet.isParried = true;
+                Destroy(oldestBullet.gameObject);
+            }
+            
+
+            // 3. Reset parry flags and hurt enemy
+            ResetParryTrigger();
+
+            EnemyManager.Instance.HurtEnemy();
+
+            Debug.Log($"[POST-COMBATE] Enemigo derrotado. Vida restante del jugador: {hpComponent.CurrentHP}");
+
         }
-        Debug.Log("Missed!");
-        return;
+        // Debug.Log("Missed!");
+        // return;
 
     }
 
 
-    private void OnHealthChanged(int HpChange, bool isHealing){
+    private void OnHealthChanged(int HPchange, bool isHealing){
         if (isHealing){
-            OnHeal(HpChange);
+            
+            OnHeal(HPchange);
+            
         }
         else {
-            OnHurt(HpChange);
+            OnHurt(HPchange);
         }
+        Debug.Log($"Vida actualizada. HP Actual: {hpComponent.CurrentHP}");
     }
 
     //remove Hat
-    private void OnHurt(int HpChange){
-
+    private void OnHurt(int HPchange){
+        Debug.Log("OURCH HP: "+ HPchange);
     }
 
     //add Hat
-    private void OnHeal(int HpChange){
-
+    private void OnHeal(int HPchange){
+        Debug.Log("HEAL HP: "+ HPchange);
     }
 
 
@@ -120,5 +161,6 @@ public class GameManager : MonoBehaviour
 
     public void Lose(){
         Debug.Log("game lost");
+        isGameOver = true;
     }
 }
