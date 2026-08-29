@@ -10,47 +10,23 @@ public class BulletScript : MonoBehaviour
     [SerializeField] public float speed = 5f;
     [SerializeField] public int size = 4;
 
-    private bool isInitialized = true; // false when Enemy class is implemented
-    private bool isInsideCollider = false;
+    public bool isParried = false;
 
+    private Rigidbody2D rb;
 
-    // public void Initialize(float enemySpeed)
-
-    // {
-
-    //     speed = enemySpeed;
-
-    //     isInitialized = true;
-
-    // }
-
-
-    void Update()
+    void Awake()
     {
-        if (isInitialized)
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    void FixedUpdate()
+    {
+        if (GameManager.Instance.isGameOver) 
         {
-            // Debug.Log("moving");
-            transform.position += Vector3.left * speed * Time.deltaTime;
+            rb.velocity = Vector2.zero;
+            return;
         }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // if (other.CompareTag("BarSensor"))
-        // {
-        //     isInsideCollider = true;
-            Debug.Log("Bullet IN collider");
-        // }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        // if (other.CompareTag("BarSensor"))
-        // {
-        //     isInsideCollider = false;
-            Debug.Log("Bullet OUT collider");
-        //     Destroy(gameObject);
-        // }
+        rb.velocity = Vector2.left * speed;
     }
 
 } 

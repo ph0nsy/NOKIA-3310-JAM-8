@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.isGameOver) return;
         UpdateBulletCooldownTimer();
         Shoot();
     }
@@ -36,13 +37,14 @@ public class Enemy : MonoBehaviour
         bIsOnCooldown = true;
     }
 
-    public void OnDespawn()
-    {
+    public void OnDespawn(){
+        
+        Debug.Log("ENEMY DEAD");
         
     }
 
     void OnHurt(int HPchange, bool isHealing){
-
+        // Debug.Log("I am hurt by the samurai!");
     }
 
     private void UpdateBulletCooldownTimer(){
@@ -65,7 +67,7 @@ public class Enemy : MonoBehaviour
         bIsOnCooldown = true;
 
         if(transform.childCount<maxBullletAmount){
-            Debug.Log("BANG!");
+            // Debug.Log("BANG!");
             Instantiate(bulletPrefab, transform);
         }
     }
