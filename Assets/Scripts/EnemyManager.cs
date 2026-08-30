@@ -41,7 +41,7 @@ public class EnemyManager : MonoBehaviour
     
         EnemySO tmpEnemySO = enemyList[CurrEnemyIdx];
 
-        Debug.Log("Spawning enemy");
+        // Debug.Log("Spawning enemy");
         
         currentEnemy = Instantiate(enemyPrefab).GetComponent<Enemy>();
         currentEnemy.hpComponent.Init(tmpEnemySO.HP, tmpEnemySO.HP);
@@ -63,9 +63,9 @@ public class EnemyManager : MonoBehaviour
     public void Despawn(){
 
         if(!currentEnemy) { return; }
-
+        Debug.Log("EnemyManager.Despawn");
         currentEnemy.OnDespawn();
-        if(GameManager.Instance.inPlay) {StartCoroutine(NextEnemy());}
+        StartCoroutine(NextEnemy());
         
     }
 
@@ -80,7 +80,7 @@ public class EnemyManager : MonoBehaviour
         Destroy(currentEnemy.gameObject);
 
         if(CurrEnemyIdx > enemyList.Count - 1) { GameManager.Instance.Win(); }
-        else { Spawn(); }
+        if(!GameManager.Instance.isGameFinished) { Spawn(); }
     }
 
 }

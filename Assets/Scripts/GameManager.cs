@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
  
     public bool inPlay = false;
     public bool ignoreInput = false;
+    public bool isGameFinished =false;
  
     public HealthComponent hpComponent;
 
@@ -49,8 +50,9 @@ public class GameManager : MonoBehaviour
 
     void ResetGame(int _animIdx)
     {
-        if(_animIdx > 0)  
+        if(_animIdx > 0 && !isGameFinished)  
         {
+            Debug.Log("GAME START");
             inPlay = true;
             ignoreInput = false;
             hpComponent.Init(6,1);
@@ -70,7 +72,7 @@ public class GameManager : MonoBehaviour
         if(ignoreInput) { return; }
         if (Input.GetKeyDown("space")) 
         { 
-            Debug.Log("CLICK");
+            // Debug.Log("CLICK");
             if (!inPlay) 
             {
                 CinematicSequence.Instance.PlayCinematic(1);
@@ -104,7 +106,7 @@ public class GameManager : MonoBehaviour
             earlyParryFlag = status;
         }
 
-        Debug.Log($"Trigger {type} actualizado a: {status}");
+        // Debug.Log($"Trigger {type} actualizado a: {status}");
     }
 
     public void ResetParryTrigger(){
@@ -115,7 +117,7 @@ public class GameManager : MonoBehaviour
     private void Parry()
     {
         if (bIsOnCooldown) {
-            Debug.Log("Parry not ready");
+            // Debug.Log("Parry not ready");
             return;
         }
         m_cooldownTimer = Cooldown;
@@ -126,12 +128,12 @@ public class GameManager : MonoBehaviour
         if (earlyParryFlag || lateParryFlag) 
         {
             AudioManager.Instance.PlaySFX(ESourceSFX.Parry);
-            Debug.Log($"Early: {earlyParryFlag} | Late: {lateParryFlag} | HP Actual: {hpComponent.CurrentHP}");
+            // Debug.Log($"Early: {earlyParryFlag} | Late: {lateParryFlag} | HP Actual: {hpComponent.CurrentHP}");
             
             // heal on perfect parry
             if(earlyParryFlag && lateParryFlag)
             {
-                Debug.Log("Perfect parry!");
+                // Debug.Log("Perfect parry!");
                 hpComponent.Heal(1);
             }
             
@@ -187,6 +189,7 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance.PlayBGM(ESourceBGM.Win);
         inPlay = false;
         ignoreInput = false;
+        isGameFinished = true;
         Debug.Log("game won");
     }
 
@@ -200,14 +203,15 @@ public class GameManager : MonoBehaviour
         ignoreInput = true;
         anim.SetBool("Dead", true);
         
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
+        ignoreInput = false;
+        inPlay = false;
+        isGameFinished = true;
+        EnemyManager.Instance.Despawn();
         
         CinematicSequence.Instance.PlayCinematic(3);
         AudioManager.Instance.PlayBGM(ESourceBGM.Lose);
-        ignoreInput = false;
-        inPlay = false;
         
-        EnemyManager.Instance.Despawn();
         
         Debug.Log("game lost");
     }
