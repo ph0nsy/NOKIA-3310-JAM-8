@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
  
     public bool inPlay = false;
     public bool ignoreInput = false;
-    public bool isGameFinished =false;
+    // public bool isGameFinished =false;
  
     public HealthComponent hpComponent;
 
@@ -50,10 +50,10 @@ public class GameManager : MonoBehaviour
 
     void ResetGame(int _animIdx)
     {
-        if(_animIdx > 0 && !isGameFinished)  
+        if(_animIdx > 0)  
         {
             Debug.Log("GAME START");
-            inPlay = true;
+            // inPlay = true;
             ignoreInput = false;
             hpComponent.Init(6,1);
             EnemyManager.Instance.CurrEnemyIdx = 0;
@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
         }
         if(_animIdx == 1) 
         { 
+            inPlay = true;
             EnemyManager.Instance.Spawn(); 
             AudioManager.Instance.PlayBGM(ESourceBGM.Level);
         }
@@ -75,10 +76,14 @@ public class GameManager : MonoBehaviour
             // Debug.Log("CLICK");
             if (!inPlay) 
             {
+                if(CinematicSequence.Instance.activeCinematic.Count>0){
+                    CinematicSequence.Instance.StopCinematic();
+                    return;
+                }
                 CinematicSequence.Instance.PlayCinematic(1);
                 AudioManager.Instance.PlayBGM(ESourceBGM.Intro);
                 AudioManager.Instance.PlaySFX(ESourceSFX.Button);
-                ignoreInput = true;
+                // ignoreInput = true;
                 return;
             }
             Parry(); 
@@ -189,24 +194,23 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance.PlayBGM(ESourceBGM.Win);
         inPlay = false;
         ignoreInput = false;
-        isGameFinished = true;
+        // isGameFinished = true;
         Debug.Log("game won");
     }
 
     public void Lose()
     {
+        ignoreInput = true;
+        anim.SetBool("Dead", true);
         StartCoroutine(LoseSequence());
     }
 
     public IEnumerator LoseSequence() 
     {
-        ignoreInput = true;
-        anim.SetBool("Dead", true);
-        
         yield return new WaitForSeconds(1);
         ignoreInput = false;
         inPlay = false;
-        isGameFinished = true;
+        // isGameFinished = true;
         EnemyManager.Instance.Despawn();
         
         CinematicSequence.Instance.PlayCinematic(3);

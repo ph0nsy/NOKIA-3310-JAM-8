@@ -75,12 +75,16 @@ public class EnemyManager : MonoBehaviour
         AnimatorStateInfo stateInfo = currentEnemy.anim.GetCurrentAnimatorStateInfo(0);
         yield return new WaitForSeconds(stateInfo.length * stateInfo.speed * 1.25f);
 
-        currentEnemy.anim.SetBool("Dead", false);
-        
-        Destroy(currentEnemy.gameObject);
-
+        if(currentEnemy)
+        {
+            Destroy(currentEnemy.gameObject);
+        }
         if(CurrEnemyIdx > enemyList.Count - 1) { GameManager.Instance.Win(); }
-        if(!GameManager.Instance.isGameFinished) { Spawn(); }
+        if(GameManager.Instance.inPlay) { 
+            Spawn(); 
+            currentEnemy.anim.SetBool("Dead", false);
+        }
+        
     }
 
 }

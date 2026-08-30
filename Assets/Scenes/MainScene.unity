@@ -723,7 +723,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1139,7 +1139,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inPlay: 0
   ignoreInput: 0
-  isGameFinished: 0
   hpComponent: {fileID: 640380175}
   earlyParryFlag: 0
   lateParryFlag: 0
@@ -1710,6 +1709,7 @@ MonoBehaviour:
   - {x: 8, y: 4}
   WinCinematic:
   - {x: 9, y: 4}
+  activeCinematic: []
 --- !u!114 &1418740398
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,7 +15,7 @@ public class CinematicSequence : MonoBehaviour
 
     private Image img;
     private float currentTimer = 0f;
-    private List<Vector2> activeCinematic = new List<Vector2>();
+    public List<Vector2> activeCinematic = new List<Vector2>();
     private bool lastFrame = false;
     CinematicType type = CinematicType.None;
 
@@ -89,7 +89,7 @@ public class CinematicSequence : MonoBehaviour
         Debug.Log("Cinematic End: " + (int) type);
         OnCinematicEnd?.Invoke((int) type);
 
-        if ((int)type <= 1) 
+        if ((int)type == 1) 
         {
             img.enabled = false;
         }

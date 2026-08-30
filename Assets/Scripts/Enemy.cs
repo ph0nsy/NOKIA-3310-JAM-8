@@ -15,13 +15,13 @@ public class Enemy : MonoBehaviour
 
     void Awake(){
         hpComponent = GetComponent<HealthComponent>();
+        anim = GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
         hpComponent.OnHealthChanged+=OnHurt;
-        anim = GetComponent<Animator>();
         OnSpawn();
     }
 
@@ -29,8 +29,10 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (!GameManager.Instance.inPlay) { return; }
-        UpdateBulletCooldownTimer();
-        Shoot();
+        if(hpComponent.CurrentHP>0){
+            UpdateBulletCooldownTimer();
+            Shoot();
+        }
     }
 
     // estos metodos nos valen, pero no para proyectos grandes
@@ -43,9 +45,9 @@ public class Enemy : MonoBehaviour
     public void OnDespawn()
     {
         // Remove bullets to wait for animation
-        foreach (Transform child in transform) 
+        for(int i = 0; i<transform.childCount; i++) 
         {
-           Destroy(child.gameObject);
+           GameObject.Destroy(transform.GetChild(i).gameObject);
         }
         
         anim.SetBool("Dead", true);

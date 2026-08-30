@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a1267a98f535c4ba962aebd72a761a, type: 3}
   m_Name: TEST_ENEMY
   m_EditorClassIdentifier: 
-  HP: 1
+  HP: 6
   Handicap: 0.5
-  BulletSpeed: 1
+  BulletSpeed: 15
   BulletSize: 4

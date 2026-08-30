@@ -78,25 +78,26 @@ public class AudioManager : MonoBehaviour
     private IEnumerator PlaySFXCoroutine(AudioClip clip)
     {
         // Remember whether BGM was playing.
-        bool wasBGMPlaying = adudiSourceBGM.isPlaying;
+        // bool wasBGMPlaying = adudiSourceBGM.isPlaying;
 
         // Stop BGM.
-        if (wasBGMPlaying)
-            adudiSourceBGM.Pause();
+        // if (wasBGMPlaying)
+        adudiSourceBGM.mute=true;
 
         // Play SFX.
         adudiSourceSFX.clip = clip;
         adudiSourceSFX.Play();
 
         // Wait until SFX finishes.
+        Debug.Log(clip.length);
         yield return new WaitForSeconds(clip.length);
 
         // Stop SFX.
         adudiSourceSFX.Stop();
 
         // Resume BGM.
-        if (wasBGMPlaying)
-            adudiSourceBGM.UnPause();
+        // if (wasBGMPlaying)
+            adudiSourceBGM.mute=false;
 
         sfxCoroutine = null;
     }
@@ -131,8 +132,7 @@ public class AudioManager : MonoBehaviour
     public void PlayBGM(ESourceBGM src)
     {
         // Don't interrupt an SFX.
-        if (adudiSourceSFX.isPlaying)
-            return;
+        
 
         adudiSourceBGM.Stop();
 
@@ -159,6 +159,9 @@ public class AudioManager : MonoBehaviour
         }
 
         adudiSourceBGM.Play();
+
+        if (adudiSourceSFX.isPlaying)
+            adudiSourceBGM.mute = true;
     }
 
     public void SetVolumeBGM(float value)
