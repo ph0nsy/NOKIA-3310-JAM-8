@@ -13,8 +13,6 @@ public class EnemyManager : MonoBehaviour
 
     public Enemy currentEnemy;
     public GameObject enemyPrefab;
-    public Transform EnemySpawnPoint;
-    [SerializeField] private float timeBetweenEnemies = 3f;
 
     void Awake() {
         if (Instance != null)
@@ -27,21 +25,20 @@ public class EnemyManager : MonoBehaviour
         CurrEnemyIdx = 0;
     }
 
-    public void Start(){
-        StartCoroutine(SpawnRoutine());
-    }
-
-    public void HurtEnemy(){
+    public void HurtEnemy()
+    {
         currentEnemy.hpComponent.Damage(1);
     }
 
 
     // Debe spawn/despawn de enemylist
     // trackear current enemy
-    public void Spawn(){
-        if(enemyList.Count <= CurrEnemyIdx) {
+    public void Spawn()
+    {
+        if(CurrEnemyIdx > enemyList.Count - 1) {
             return;
         }
+    
         EnemySO tmpEnemySO = enemyList[CurrEnemyIdx];
 
         Debug.Log("Spawning enemy");
@@ -57,26 +54,25 @@ public class EnemyManager : MonoBehaviour
         currentEnemy.bulletPrefab.GetComponent<BulletScript>().speed = tmpEnemySO.BulletSpeed;
         currentEnemy.bulletPrefab.GetComponent<BulletScript>().size = tmpEnemySO.BulletSize;
         
-        CurrEnemyIdx++;
-
-        int enemigosRestantes = enemyList.Count - CurrEnemyIdx;
+        int enemigosRestantes = enemyList.Count - 1 - CurrEnemyIdx;
         Debug.Log($"Spawning enemigo. Enemigos restantes en lista: {enemigosRestantes}. Max bullets: {currentEnemy.maxBullletAmount}");
 
-
+        CurrEnemyIdx++;
     }
 
     public void Despawn(){
 
+        if(!currentEnemy) { return; }
+
         currentEnemy.OnDespawn();
-        // yield WaitForSeconds(currentEnemy.Animation["Death"].length*currentEnemy.Animation["Death"].speed)
         Destroy(currentEnemy.gameObject);
 
-        if(CurrEnemyIdx >= enemyList.Count - 1) {
+        if(CurrEnemyIdx > enemyList.Count - 1) {
             Debug.Log("GameManager.win()");
             GameManager.Instance.Win();
             return;
         }
-        
+
         Spawn();
     }
 

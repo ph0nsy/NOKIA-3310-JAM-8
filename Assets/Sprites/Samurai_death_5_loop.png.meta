@@ -125,9 +125,9 @@ TextureImporter:
       name: Samurai_death_5_loop_0
       rect:
         serializedVersion: 2
-        x: 5
+        x: 6
         y: 0
-        width: 12
+        width: 11
         height: 15
       alignment: 6
       pivot: {x: 0, y: 0}

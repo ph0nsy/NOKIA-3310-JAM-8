@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool bIsOnCooldown = false;
     float b_cooldownTimer = 0.0f;
 
+    private Animator anim;
 
     void Awake(){
         hpComponent = GetComponent<HealthComponent>();
@@ -20,13 +21,14 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         hpComponent.OnHealthChanged+=OnHurt;
+        anim = GetComponent<Animator>();
         OnSpawn();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.isGameOver) return;
+        if (!GameManager.Instance.inPlay) { return; }
         UpdateBulletCooldownTimer();
         Shoot();
     }
@@ -37,14 +39,24 @@ public class Enemy : MonoBehaviour
         bIsOnCooldown = true;
     }
 
-    public void OnDespawn(){
+    public void OnDespawn()
+    {
         
         Debug.Log("ENEMY DEAD");
         
     }
 
-    void OnHurt(int HPchange, bool isHealing){
-        // Debug.Log("I am hurt by the samurai!");
+    void OnHurt(int HPchange, bool isHealing)
+    {    
+        anim.SetBool("Hit", true);
+        StartCoroutine(ResetSpriteFromHit());
+    }
+
+    public IEnumerator ResetSpriteFromHit()
+    {
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        yield return new WaitForSeconds(0.75f);
+        anim.SetBool("Hit", false);
     }
 
     private void UpdateBulletCooldownTimer(){
@@ -56,9 +68,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
     // Spawnea bala
-    void Shoot(){
-        
+    void Shoot()
+    {
+        anim.SetBool("Shooting", false);
         if (bIsOnCooldown) {
             // Debug.Log("Bullet not ready");
             return;
@@ -67,8 +81,16 @@ public class Enemy : MonoBehaviour
         bIsOnCooldown = true;
 
         if(transform.childCount<maxBullletAmount){
-            // Debug.Log("BANG!");
             Instantiate(bulletPrefab, transform);
         }
+
+        StartCoroutine(ResetSpriteFromShoot());
+    }
+    
+    public IEnumerator ResetSpriteFromShoot()
+    {
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        yield return new WaitForSeconds(0.75f);
+        anim.SetBool("Shooting", false);
     }
 }

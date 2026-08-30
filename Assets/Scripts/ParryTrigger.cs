@@ -35,7 +35,7 @@ public class ParryTrigger : MonoBehaviour
             if (tipo == TriggerType.Late && !bullet.isParried){
                 // Debug.Log("DESTROY BULLET");
                 Destroy(other.gameObject);
-                if (!GameManager.Instance.isGameOver)
+                if (GameManager.Instance.inPlay)
                 {
                     GameManager.Instance.hpComponent.Damage(1);
                 }

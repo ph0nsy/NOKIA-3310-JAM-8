@@ -13,7 +13,6 @@ public class HealthBar : MonoBehaviour
             gm.hpComponent.OnHealthChanged += RefreshHatBar;
             return;
         }
-        Debug.Log("No GameManager");
     }
 
     // Update is called once per frame

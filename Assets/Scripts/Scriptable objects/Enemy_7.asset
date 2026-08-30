@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Enemy_7
   m_EditorClassIdentifier: 
   HP: 6
-  Handicap: 0.5
+  Handicap: 1
   BulletSpeed: 10
-  BulletSize: 4
+  BulletSize: 2

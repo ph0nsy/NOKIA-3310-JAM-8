@@ -35,7 +35,7 @@ public class CinematicSequence : MonoBehaviour
     void Start()
     {
         img = GetComponent<Image>();
-        img.enabled = false;
+        //img.enabled = false;
     }
 
     void Update()
@@ -86,6 +86,7 @@ public class CinematicSequence : MonoBehaviour
 
     public void StopCinematic()
     {
+        Debug.Log("Cinematic End: " + (int) type);
         OnCinematicEnd?.Invoke((int) type);
 
         if ((int)type <= 1) 
