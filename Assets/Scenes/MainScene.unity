@@ -720,7 +720,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -816,7 +816,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -1139,6 +1139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inPlay: 0
   ignoreInput: 0
+  isGameFinished: 0
   hpComponent: {fileID: 640380175}
   earlyParryFlag: 0
   lateParryFlag: 0
@@ -1695,11 +1696,11 @@ MonoBehaviour:
   - {fileID: -275171731391557691, guid: fb025d8c4b52a794590951e56aceb4cd, type: 3}
   IntroCinematic:
   - {x: 0, y: 1}
-  - {x: 1, y: 0.5}
-  - {x: 2, y: 0.5}
-  - {x: 3, y: 1}
-  - {x: 4, y: 1}
-  - {x: 5, y: 1}
+  - {x: 1, y: 2}
+  - {x: 2, y: 1.5}
+  - {x: 3, y: 1.5}
+  - {x: 4, y: 1.5}
+  - {x: 5, y: 1.5}
   - {x: 6, y: 0.1}
   - {x: 7, y: 0.1}
   - {x: 6, y: 0.1}
