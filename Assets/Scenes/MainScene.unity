@@ -704,6 +704,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a4e2306bb733386448acf3d37d66b2d2, type: 2}
   - {fileID: 11400000, guid: 830907320893e3b42ad2a46ceb9f68cb, type: 2}
   - {fileID: 11400000, guid: 98a1fdd360c03ad40b98f7583dda6fdc, type: 2}
+  - {fileID: 11400000, guid: bf214038458662d47ab34abe9fe85048, type: 2}
+  - {fileID: 11400000, guid: 7755e0df87311614097d3a0dbd939f15, type: 2}
+  - {fileID: 11400000, guid: c1d743e1e6c115e4eac68e07c46459db, type: 2}
   currentEnemy: {fileID: 0}
   enemyPrefab: {fileID: 261705649322634054, guid: a201ea9b302fd2347b971c1f39f4c188, type: 3}
 --- !u!82 &519420035

@@ -65,7 +65,8 @@ public class EnemyManager : MonoBehaviour
         if(!currentEnemy) { return; }
 
         currentEnemy.OnDespawn();
-        StartCoroutine(NextEnemy());
+        if(GameManager.Instance.inPlay) {StartCoroutine(NextEnemy());}
+        
     }
 
     

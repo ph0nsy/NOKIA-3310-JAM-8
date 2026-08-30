@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4a1267a98f535c4ba962aebd72a761a, type: 3}
-  m_Name: Enemy_7
+  m_Name: Enemy_8
   m_EditorClassIdentifier: 
   HP: 6
-  Handicap: 0.75
-  BulletSpeed: 10
+  Handicap: 0.5
+  BulletSpeed: 13
   BulletSize: 2

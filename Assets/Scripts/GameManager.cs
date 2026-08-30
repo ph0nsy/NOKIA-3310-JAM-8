@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     public bool earlyParryFlag = false;
     public bool lateParryFlag = false;
-    public float Cooldown = 0.1f;
+    public float Cooldown = 0.25f;
     public bool bIsOnCooldown = false;
     public float m_cooldownTimer = 0.0f;
     public float perfectParryWindow = 0.2f;
@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     {
         hpComponent = GetComponent<HealthComponent>();
         hpComponent.Init(6,1);
+        hpComponent.OnHealthChanged+=Hurt;
         hpComponent.OnDeath+=Lose;
         CinematicSequence.Instance.OnCinematicEnd += ResetGame;
         anim = GetComponent<Animator>();
