@@ -5,17 +5,20 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
+ 
+    public bool inPlay = false;
+    public bool ignoreInput = false;
+ 
     public HealthComponent hpComponent;
-
 
     public bool earlyParryFlag = false;
     public bool lateParryFlag = false;
     public float Cooldown = 0.1f;
     public bool bIsOnCooldown = false;
     public float m_cooldownTimer = 0.0f;
-    public bool isGameOver = false;
     public float perfectParryWindow = 0.2f;
 
+    private Animator anim;
 
     void Awake() {
         if (Instance != null)
@@ -24,27 +27,60 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+    }
 
+    void Start()
+    {
         hpComponent = GetComponent<HealthComponent>();
-        hpComponent.Init(3,1);
-        hpComponent.OnHealthChanged+=OnHealthChanged;
+        hpComponent.Init(6,1);
         hpComponent.OnDeath+=Lose;
-        
+        CinematicSequence.Instance.OnCinematicEnd += ResetGame;
+        anim = GetComponent<Animator>();
+        AudioManager.Instance.PlayBGM(ESourceBGM.Intro);
     }
 
-    void Start(){
+    void Hurt(int _hp, bool isHeal)
+    {   
+        if(isHeal) { return; }
+        AudioManager.Instance.PlaySFX(ESourceSFX.Hurt);
     }
 
-    void Update(){
-        if (Input.GetKeyDown("space")) {
+    void ResetGame(int _animIdx)
+    {
+        if(_animIdx > 0)  
+        {
+            inPlay = true;
+            ignoreInput = false;
+            hpComponent.Init(6,1);
+            EnemyManager.Instance.CurrEnemyIdx = 0;
+            anim.SetBool("Dead", false);
+            anim.SetBool("Parrying", false);
+        }
+        if(_animIdx == 1) 
+        { 
+            EnemyManager.Instance.Spawn(); 
+            AudioManager.Instance.PlayBGM(ESourceBGM.Level);
+        }
+    }
+
+    void Update()
+    {
+        if(ignoreInput) { return; }
+        if (Input.GetKeyDown("space")) 
+        { 
             Debug.Log("CLICK");
-            Parry();
+            if (!inPlay) 
+            {
+                CinematicSequence.Instance.PlayCinematic(1);
+                AudioManager.Instance.PlayBGM(ESourceBGM.Intro);
+                AudioManager.Instance.PlaySFX(ESourceSFX.Button);
+                ignoreInput = true;
+                return;
+            }
+            Parry(); 
         }
         UpdateParryCooldownTimer();
-
     }
 
     private void UpdateParryCooldownTimer(){
@@ -75,11 +111,8 @@ public class GameManager : MonoBehaviour
         earlyParryFlag = false;
     }
 
-
-    private void Parry(){
-
-        // Debug.Log(bIsOnCooldown);
-        // Debug.Log( m_cooldownTimer);
+    private void Parry()
+    {
         if (bIsOnCooldown) {
             Debug.Log("Parry not ready");
             return;
@@ -87,14 +120,17 @@ public class GameManager : MonoBehaviour
         m_cooldownTimer = Cooldown;
         bIsOnCooldown = true;
 
-        
-        if (earlyParryFlag || lateParryFlag) {
+        anim.SetBool("Parrying", true);
+        //
+        if (earlyParryFlag || lateParryFlag) 
+        {
+            AudioManager.Instance.PlaySFX(ESourceSFX.Parry);
             Debug.Log($"Early: {earlyParryFlag} | Late: {lateParryFlag} | HP Actual: {hpComponent.CurrentHP}");
-
-            // 1. heal on perfect parry
-            if(earlyParryFlag && lateParryFlag){
+            
+            // heal on perfect parry
+            if(earlyParryFlag && lateParryFlag)
+            {
                 Debug.Log("Perfect parry!");
-
                 hpComponent.Heal(1);
             }
             
@@ -126,41 +162,52 @@ public class GameManager : MonoBehaviour
             Debug.Log($"[POST-COMBATE] Enemigo derrotado. Vida restante del jugador: {hpComponent.CurrentHP}");
 
         }
-        // Debug.Log("Missed!");
-        // return;
-
-    }
-
-
-    private void OnHealthChanged(int HPchange, bool isHealing){
-        if (isHealing){
-            
-            OnHeal(HPchange);
-            
+        else 
+        {
+            AudioManager.Instance.PlaySFX(ESourceSFX.Slash);
         }
-        else {
-            OnHurt(HPchange);
-        }
-        Debug.Log($"Vida actualizada. HP Actual: {hpComponent.CurrentHP}");
+
+
+        StartCoroutine(ResetSprite());
+        Debug.Log("Missed!");
+        return;
     }
 
-    //remove Hat
-    private void OnHurt(int HPchange){
-        Debug.Log("OURCH HP: "+ HPchange);
+    public IEnumerator ResetSprite()
+    {
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        yield return new WaitForSeconds(Cooldown);
+        anim.SetBool("Parrying", false);
     }
 
-    //add Hat
-    private void OnHeal(int HPchange){
-        Debug.Log("HEAL HP: "+ HPchange);
-    }
-
-
-    public void Win(){
+    public void Win()
+    {
+        CinematicSequence.Instance.PlayCinematic(2);
+        AudioManager.Instance.PlayBGM(ESourceBGM.Win);
+        inPlay = false;
+        ignoreInput = false;
         Debug.Log("game won");
     }
 
-    public void Lose(){
+    public void Lose()
+    {
+        StartCoroutine(LoseSequence());
+    }
+
+    public IEnumerator LoseSequence() 
+    {
+        ignoreInput = true;
+        anim.SetBool("Dead", true);
+        
+        yield return new WaitForSeconds(5);
+        
+        CinematicSequence.Instance.PlayCinematic(3);
+        AudioManager.Instance.PlayBGM(ESourceBGM.Lose);
+        ignoreInput = false;
+        inPlay = false;
+        
+        EnemyManager.Instance.Despawn();
+        
         Debug.Log("game lost");
-        isGameOver = true;
     }
 }

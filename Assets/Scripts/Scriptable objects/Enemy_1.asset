@@ -15,4 +15,4 @@ MonoBehaviour:
   HP: 1
   Handicap: 1
   BulletSpeed: 5
-  BulletSize: 6
+  BulletSize: 3

@@ -5,9 +5,8 @@ using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
-    [HideInInspector]
     public int MaxHP { get; set; }
-    public int CurrentHP;
+    public int CurrentHP { get; set; }
 
     public event Action<int, bool> OnHealthChanged;
     public event Action OnDeath;
@@ -16,16 +15,11 @@ public class HealthComponent : MonoBehaviour
     {
         MaxHP = _maxHP;
         CurrentHP = _currentHP;
-    }
-
-    void Update()
-    {
-        
+        OnHealthChanged?.Invoke(CurrentHP, true);
     }
 
     public void Damage(int _amount)
     {
-        
         CurrentHP -= _amount;
         CurrentHP = Mathf.Max(0, CurrentHP);
 
@@ -41,5 +35,4 @@ public class HealthComponent : MonoBehaviour
         CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
         OnHealthChanged?.Invoke(CurrentHP, true);
     }
-
 }

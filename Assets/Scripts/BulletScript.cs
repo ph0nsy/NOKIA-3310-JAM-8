@@ -18,10 +18,15 @@ public class BulletScript : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
     }
+    
+    void Start() 
+    {
+        transform.localScale = new Vector3(size, 1, 1);
+    }
 
     void FixedUpdate()
     {
-        if (GameManager.Instance.isGameOver) 
+        if (!GameManager.Instance.inPlay) 
         {
             rb.velocity = Vector2.zero;
             return;

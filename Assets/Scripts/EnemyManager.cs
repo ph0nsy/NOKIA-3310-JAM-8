@@ -6,13 +6,13 @@ public class EnemyManager : MonoBehaviour
 {
     public const float PIXELRATIO = 175/420;
 
-
-    public static EnemyManager Instance {get; private set;}
+    public static EnemyManager Instance { get; private set; }
+    
     public List<EnemySO> enemyList = new List<EnemySO>();
+    public int CurrEnemyIdx { get; set; }
+
     public Enemy currentEnemy;
     public GameObject enemyPrefab;
-    public Transform EnemySpawnPoint;
-    [SerializeField] private float timeBetweenEnemies = 3f;
 
     void Awake() {
         if (Instance != null)
@@ -22,30 +22,27 @@ public class EnemyManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        CurrEnemyIdx = 0;
     }
 
-    public void Start(){
-        StartCoroutine(SpawnRoutine());
-    }
-
-    public void HurtEnemy(){
+    public void HurtEnemy()
+    {
         currentEnemy.hpComponent.Damage(1);
     }
 
 
     // Debe spawn/despawn de enemylist
     // trackear current enemy
-    public IEnumerator SpawnRoutine(){
-
-        yield return new WaitForSeconds(timeBetweenEnemies);
-
-        if(GameManager.Instance.isGameOver || enemyList.Count < 1) {
-            yield break;
+    public void Spawn()
+    {
+        if(CurrEnemyIdx > enemyList.Count - 1) {
+            return;
         }
+    
+        EnemySO tmpEnemySO = enemyList[CurrEnemyIdx];
 
-        EnemySO tmpEnemySO = enemyList[0];
         Debug.Log("Spawning enemy");
+        
         currentEnemy = Instantiate(enemyPrefab).GetComponent<Enemy>();
         currentEnemy.hpComponent.Init(tmpEnemySO.HP, tmpEnemySO.HP);
 
@@ -54,30 +51,35 @@ public class EnemyManager : MonoBehaviour
         currentEnemy.bulletCooldown = tmpEnemySO.Handicap + PIXELRATIO*(tmpEnemySO.BulletSize + 4 )/tmpEnemySO.BulletSpeed;
         currentEnemy.maxBullletAmount = tmpEnemySO.HP;
 
-        currentEnemy.bulletPrefab.GetComponent<BulletScript>().speed = enemyList[0].BulletSpeed;
-        currentEnemy.bulletPrefab.GetComponent<BulletScript>().size = enemyList[0].BulletSize;
-
-        int enemigosRestantes = enemyList.Count;
+        currentEnemy.bulletPrefab.GetComponent<BulletScript>().speed = tmpEnemySO.BulletSpeed;
+        currentEnemy.bulletPrefab.GetComponent<BulletScript>().size = tmpEnemySO.BulletSize;
+        
+        int enemigosRestantes = enemyList.Count - 1 - CurrEnemyIdx;
         Debug.Log($"Spawning enemigo. Enemigos restantes en lista: {enemigosRestantes}. Max bullets: {currentEnemy.maxBullletAmount}");
 
-        enemyList.Remove(tmpEnemySO);
-
-
+        CurrEnemyIdx++;
     }
 
     public void Despawn(){
 
+        if(!currentEnemy) { return; }
+
         currentEnemy.OnDespawn();
-        // yield WaitForSeconds(currentEnemy.Animation["Death"].length*currentEnemy.Animation["Death"].speed)
+        StartCoroutine(NextEnemy());
+    }
+
+    
+    public IEnumerator NextEnemy()
+    {
+        AnimatorStateInfo stateInfo = currentEnemy.anim.GetCurrentAnimatorStateInfo(0);
+        yield return new WaitForSeconds(stateInfo.length * stateInfo.speed * 1.25f);
+
+        currentEnemy.anim.SetBool("Dead", false);
+        
         Destroy(currentEnemy.gameObject);
 
-        if(enemyList.Count < 1) {
-            Debug.Log("GameManager.win()");
-            GameManager.Instance.Win();
-            return;
-        }
-        StartCoroutine(SpawnRoutine());
-        
+        if(CurrEnemyIdx > enemyList.Count - 1) { GameManager.Instance.Win(); }
+        else { Spawn(); }
     }
 
 }
