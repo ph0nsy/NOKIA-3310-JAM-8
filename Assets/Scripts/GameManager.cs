@@ -37,6 +37,13 @@ public class GameManager : MonoBehaviour
         hpComponent.OnDeath+=Lose;
         CinematicSequence.Instance.OnCinematicEnd += ResetGame;
         anim = GetComponent<Animator>();
+        AudioManager.Instance.PlayBGM(ESourceBGM.Intro);
+    }
+
+    void Hurt(int _hp, bool isHeal)
+    {   
+        if(isHeal) { return; }
+        AudioManager.Instance.PlaySFX(ESourceSFX.Hurt);
     }
 
     void ResetGame(int _animIdx)
@@ -50,7 +57,11 @@ public class GameManager : MonoBehaviour
             anim.SetBool("Dead", false);
             anim.SetBool("Parrying", false);
         }
-        if(_animIdx == 1) { EnemyManager.Instance.Spawn(); }
+        if(_animIdx == 1) 
+        { 
+            EnemyManager.Instance.Spawn(); 
+            AudioManager.Instance.PlayBGM(ESourceBGM.Level);
+        }
     }
 
     void Update()
@@ -62,6 +73,8 @@ public class GameManager : MonoBehaviour
             if (!inPlay) 
             {
                 CinematicSequence.Instance.PlayCinematic(1);
+                AudioManager.Instance.PlayBGM(ESourceBGM.Intro);
+                AudioManager.Instance.PlaySFX(ESourceSFX.Button);
                 ignoreInput = true;
                 return;
             }
@@ -111,13 +124,9 @@ public class GameManager : MonoBehaviour
         //
         if (earlyParryFlag || lateParryFlag) 
         {
+            AudioManager.Instance.PlaySFX(ESourceSFX.Parry);
             Debug.Log($"Early: {earlyParryFlag} | Late: {lateParryFlag} | HP Actual: {hpComponent.CurrentHP}");
             
-            /*
-            EnemyManager.Instance.currentEnemy.hpComponent.Damage(1);
-            GameObject parriedBullet = EnemyManager.Instance.currentEnemy.transform.GetChild(0).gameObject;
-            Destroy(parriedBullet);
-            */
             // heal on perfect parry
             if(earlyParryFlag && lateParryFlag)
             {
@@ -153,6 +162,10 @@ public class GameManager : MonoBehaviour
             Debug.Log($"[POST-COMBATE] Enemigo derrotado. Vida restante del jugador: {hpComponent.CurrentHP}");
 
         }
+        else 
+        {
+            AudioManager.Instance.PlaySFX(ESourceSFX.Slash);
+        }
 
 
         StartCoroutine(ResetSprite());
@@ -170,6 +183,7 @@ public class GameManager : MonoBehaviour
     public void Win()
     {
         CinematicSequence.Instance.PlayCinematic(2);
+        AudioManager.Instance.PlayBGM(ESourceBGM.Win);
         inPlay = false;
         ignoreInput = false;
         Debug.Log("game won");
@@ -188,10 +202,11 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(5);
         
         CinematicSequence.Instance.PlayCinematic(3);
+        AudioManager.Instance.PlayBGM(ESourceBGM.Lose);
         ignoreInput = false;
         inPlay = false;
         
-        Destroy(EnemyManager.Instance.currentEnemy.gameObject);
+        EnemyManager.Instance.Despawn();
         
         Debug.Log("game lost");
     }

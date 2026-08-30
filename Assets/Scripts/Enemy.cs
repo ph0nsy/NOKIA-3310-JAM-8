@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool bIsOnCooldown = false;
     float b_cooldownTimer = 0.0f;
 
-    private Animator anim;
+    public Animator anim;
 
     void Awake(){
         hpComponent = GetComponent<HealthComponent>();
@@ -37,25 +37,30 @@ public class Enemy : MonoBehaviour
     void OnSpawn()
     {
         bIsOnCooldown = true;
+        b_cooldownTimer = bulletCooldown;
     }
 
     public void OnDespawn()
     {
+        // Remove bullets to wait for animation
+        foreach (Transform child in transform) 
+        {
+           Destroy(child.gameObject);
+        }
         
-        Debug.Log("ENEMY DEAD");
-        
+        anim.SetBool("Dead", true);
     }
 
     void OnHurt(int HPchange, bool isHealing)
     {    
         anim.SetBool("Hit", true);
+        AudioManager.Instance.PlaySFX(ESourceSFX.Surprised);
         StartCoroutine(ResetSpriteFromHit());
     }
 
     public IEnumerator ResetSpriteFromHit()
     {
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        yield return new WaitForSeconds(0.75f);
+        yield return new WaitForSeconds(0.5f);
         anim.SetBool("Hit", false);
     }
 
@@ -72,25 +77,27 @@ public class Enemy : MonoBehaviour
     // Spawnea bala
     void Shoot()
     {
-        anim.SetBool("Shooting", false);
         if (bIsOnCooldown) {
             // Debug.Log("Bullet not ready");
             return;
         }
+        
         b_cooldownTimer = bulletCooldown;
         bIsOnCooldown = true;
 
-        if(transform.childCount<maxBullletAmount){
+        if(transform.childCount < maxBullletAmount)
+        {        
+            AudioManager.Instance.PlaySFX(ESourceSFX.Gun);
+            anim.SetBool("Shooting", true);
             Instantiate(bulletPrefab, transform);
+            StartCoroutine(ResetSpriteFromShoot());
         }
-
-        StartCoroutine(ResetSpriteFromShoot());
+        
     }
     
     public IEnumerator ResetSpriteFromShoot()
     {
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        yield return new WaitForSeconds(0.75f);
+        yield return new WaitForSeconds(bulletCooldown/4f);
         anim.SetBool("Shooting", false);
     }
 }

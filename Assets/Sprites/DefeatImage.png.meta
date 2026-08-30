@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 30b07f0968422574280e3fbdc8b097a9
+guid: 82aeccae0db8c6d42a6a5c28f2d892a6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5494650935614742974
-    second: Health_bar_0_reverse_0
+      213: 5984255098789940453
+    second: DefeatImage_0
   externalObjects: {}
   serializedVersion: 12
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -48,10 +48,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 2.4
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -122,13 +122,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Health_bar_0_reverse_0
+      name: DefeatImage_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 7
-        height: 5
+        width: 84
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -136,8 +136,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eb1a51ef9ebe04c40800000000000000
-      internalID: 5494650935614742974
+      spriteID: 5ecc1b07e485c0350800000000000000
+      internalID: 5984255098789940453
       vertices: []
       indices: 
       edges: []
@@ -153,7 +153,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Health_bar_0_reverse_0: 5494650935614742974
+      DefeatImage_0: 5984255098789940453
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

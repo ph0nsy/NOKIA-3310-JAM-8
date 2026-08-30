@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum ESourceSFX
@@ -14,8 +13,10 @@ public enum ESourceSFX
 
 public enum ESourceBGM
 {
-    Menu,
-    Level
+    Intro,
+    Level,
+    Win,
+    Lose
 }
 
 public class AudioManager : MonoBehaviour
@@ -26,6 +27,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource adudiSourceBGM;
 
     [Header("Samurai SFX")]
+    public AudioClip pressButtonSFX;
     public AudioClip hurtSFX;
     public AudioClip slashSFX;
     public AudioClip parrySFX;
@@ -34,13 +36,13 @@ public class AudioManager : MonoBehaviour
     public AudioClip gunSFX;
     public AudioClip surprisedSFX;
 
-
     [Header("Level BGM")]
     public AudioClip levelBGM;
+    public AudioClip introBGM;
+    public AudioClip winBGM;
+    public AudioClip loseBGM;
 
-    [Header("User Interface")]
-    public AudioClip pressButtonSFX;
-    public AudioClip menuBGM;
+    private Coroutine sfxCoroutine;
 
     void Awake()
     {
@@ -51,62 +53,133 @@ public class AudioManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
-    // Can only play one at a time
-    public void PlaySFX(ESourceSFX _src)
+    public void PlaySFX(ESourceSFX src)
     {
+        AudioClip clip = GetSFXClip(src);
+
+        if (clip == null)
+            return;
+
+        // Stop the currently playing SFX, if any.
+        if (sfxCoroutine != null)
+        {
+            StopCoroutine(sfxCoroutine);
+            sfxCoroutine = null;
+        }
+
         adudiSourceSFX.Stop();
-        switch(_src)
+
+        // Play the new SFX and temporarily stop the BGM.
+        sfxCoroutine = StartCoroutine(PlaySFXCoroutine(clip));
+    }
+
+    private IEnumerator PlaySFXCoroutine(AudioClip clip)
+    {
+        // Remember whether BGM was playing.
+        bool wasBGMPlaying = adudiSourceBGM.isPlaying;
+
+        // Stop BGM.
+        if (wasBGMPlaying)
+            adudiSourceBGM.Pause();
+
+        // Play SFX.
+        adudiSourceSFX.clip = clip;
+        adudiSourceSFX.Play();
+
+        // Wait until SFX finishes.
+        yield return new WaitForSeconds(clip.length);
+
+        // Stop SFX.
+        adudiSourceSFX.Stop();
+
+        // Resume BGM.
+        if (wasBGMPlaying)
+            adudiSourceBGM.UnPause();
+
+        sfxCoroutine = null;
+    }
+
+    private AudioClip GetSFXClip(ESourceSFX src)
+    {
+        switch (src)
         {
             case ESourceSFX.Button:
-                adudiSourceSFX.PlayOneShot(pressButtonSFX);
-                break;
+                return pressButtonSFX;
+
             case ESourceSFX.Hurt:
-                adudiSourceSFX.PlayOneShot(hurtSFX);
-                break;
+                return hurtSFX;
+
             case ESourceSFX.Slash:
-                adudiSourceSFX.PlayOneShot(slashSFX);
-                break;
+                return slashSFX;
+
             case ESourceSFX.Parry:
-                adudiSourceSFX.PlayOneShot(parrySFX);
-                break;
-                
+                return parrySFX;
+
             case ESourceSFX.Gun:
-                adudiSourceSFX.PlayOneShot(gunSFX);
-                break;
+                return gunSFX;
+
             case ESourceSFX.Surprised:
-                adudiSourceSFX.PlayOneShot(surprisedSFX);
-                break;
-            default: return;
+                return surprisedSFX;
+
+            default:
+                return null;
         }
     }
 
-    public void PlayBGM(ESourceBGM _src)
+    public void PlayBGM(ESourceBGM src)
     {
+        // Don't interrupt an SFX.
+        if (adudiSourceSFX.isPlaying)
+            return;
+
         adudiSourceBGM.Stop();
-        switch (_src)
+
+        switch (src)
         {
             case ESourceBGM.Level:
                 adudiSourceBGM.clip = levelBGM;
                 break;
-            case ESourceBGM.Menu:
-                adudiSourceBGM.clip = menuBGM;
+
+            case ESourceBGM.Intro:
+                adudiSourceBGM.clip = introBGM;
                 break;
-            default: return;
+
+            case ESourceBGM.Win:
+                adudiSourceBGM.clip = winBGM;
+                break;
+
+            case ESourceBGM.Lose:
+                adudiSourceBGM.clip = loseBGM;
+                break;
+
+            default:
+                return;
         }
+
         adudiSourceBGM.Play();
-
     }
 
-    public void SetVolumeBGM(float _value)
+    public void SetVolumeBGM(float value)
     {
-        adudiSourceBGM.outputAudioMixerGroup.audioMixer.SetFloat("BGM_Volume", Mathf.Log10(_value) * 20);
+        if (value <= 0)
+            value = 0.0001f;
+
+        adudiSourceBGM.outputAudioMixerGroup.audioMixer.SetFloat(
+            "BGM_Volume",
+            Mathf.Log10(value) * 20
+        );
     }
 
-    public void SetVolumeSFX(float _value)
+    public void SetVolumeSFX(float value)
     {
-        adudiSourceSFX.outputAudioMixerGroup.audioMixer.SetFloat("SFX_Volume", Mathf.Log10(_value) * 20);
+        if (value <= 0)
+            value = 0.0001f;
+
+        adudiSourceSFX.outputAudioMixerGroup.audioMixer.SetFloat(
+            "SFX_Volume",
+            Mathf.Log10(value) * 20
+        );
     }
 }

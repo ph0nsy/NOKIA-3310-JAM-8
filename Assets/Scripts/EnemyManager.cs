@@ -65,15 +65,21 @@ public class EnemyManager : MonoBehaviour
         if(!currentEnemy) { return; }
 
         currentEnemy.OnDespawn();
+        StartCoroutine(NextEnemy());
+    }
+
+    
+    public IEnumerator NextEnemy()
+    {
+        AnimatorStateInfo stateInfo = currentEnemy.anim.GetCurrentAnimatorStateInfo(0);
+        yield return new WaitForSeconds(stateInfo.length * stateInfo.speed * 1.25f);
+
+        currentEnemy.anim.SetBool("Dead", false);
+        
         Destroy(currentEnemy.gameObject);
 
-        if(CurrEnemyIdx > enemyList.Count - 1) {
-            Debug.Log("GameManager.win()");
-            GameManager.Instance.Win();
-            return;
-        }
-
-        Spawn();
+        if(CurrEnemyIdx > enemyList.Count - 1) { GameManager.Instance.Win(); }
+        else { Spawn(); }
     }
 
 }

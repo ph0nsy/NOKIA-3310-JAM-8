@@ -152,7 +152,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Health_hat_2_reverse_0: 8745424271260328737
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
